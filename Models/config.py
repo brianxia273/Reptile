@@ -1,18 +1,18 @@
 # ========================================
 # Select size, dataset, output, model and randomState
 size = 40
-data = "Datasets/Nitride (Dataset 1) NTi.csv"
+data = "Datasets/NitrideMetal (Dataset 2) NTi.csv"
 yIndex = -2
 # -2 = film-thickness
 # -1 = N/Ti ratio
 
 # ---------------------------------------
-model = "BRR"
-randomState = 42
+model = "GPR"
+randomState = 45
 # ---------------------------------------
 displayRandomState = 40
 displayModelNum = 20
-displayModel = "SVR"
+displayModel = "GPR"
 # ========================================
 
 
@@ -21,6 +21,8 @@ displayModel = "SVR"
     # Datasets/Metal (Alone).csv
     # Datasets/Metal (Alone) NTi.csv
     # Datasets/Nitride (Dataset 1).csv
-    # Datasets/Nitride (Dataset 1) NTi.csv
     # Datasets/NitrideMetal (Dataset 2).csv
+
+
     # Datasets/NitrideMetal (Dataset 2) NTi.csv
+    # Datasets/Nitride (Dataset 1) NTi.csv
