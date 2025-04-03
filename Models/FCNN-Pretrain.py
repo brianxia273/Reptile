@@ -52,8 +52,8 @@ history = fcnnModel.fit(xScaled, y, epochs= epochs, batch_size = batchSize, verb
 print("Training Loss:", history.history['loss'])
 
 # Save FCNN
-directory = f"Neural Networks/FCNN/{datasetModels}/{output}/{model}/"
+directory = f"Pre-Trained Neural Networks/FCNN/{datasetModels}/{output}/"
 os.makedirs(directory, exist_ok=True)
-modelName = f"Pretrained NN - {model} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
+modelName = f"Pre-Trained NN - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
 fcnnModel.save(directory + modelName)
 print("Saved " + directory + modelName + "!")
