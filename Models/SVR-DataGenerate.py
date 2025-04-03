@@ -1,5 +1,6 @@
 # Generating augmented data with SVR regression model
 # NOTE: MUST ADJUST SVG HYPERPARAMETERS FOR BEST PERFORMANCE
+# NOTE: INTERPOLATED/EXTRAPOLATED DATA RATIO IS APPROXIMATED, NOT A PRECISE RATIO
 
 import numpy as np
 import pandas as pd
@@ -15,6 +16,7 @@ data = config.data
 yIndex = config.yIndex
 randomState = config.randomState
 model = "SVR"
+extrapolationRange = config.extrapolationRange
 
 # Automating file creation
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
@@ -39,17 +41,17 @@ xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
 # Init SVR model
-svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS
+svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS HERE
 svr.fit(xTrainScaled, yTrain)
 
 
-# Interpolation and Extrapolation, at same time
+# Interpolation and Extrapolation
 xMin = x.min(axis=0)
 xMax = x.max(axis=0)
-xMin = xMin - 0.03 * (xMax - xMin)
-xMax = xMax + 0.03 * (xMax - xMin)
-totalAugmentedX = 822
-# 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total
+xMin = xMin - extrapolationRange * (xMax - xMin)
+xMax = xMax + extrapolationRange * (xMax - xMin)
+totalAugmentedX = 1028
+# Around 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total.
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
