@@ -1,10 +1,13 @@
-# Writing metrics for BRR regression model for sizes 5-40.
+# Writing metrics for GPR regression model for sizes 5-40.
+# NOTE: MUST ADJUST GPR HYPERPARAMETERS FOR BEST PERFORMANCE
 
 import numpy as np
 import pandas as pd
+import joblib
+from sklearn.gaussian_process.kernels import ConstantKernel, Matern
 import os
 import config
-from sklearn.linear_model import BayesianRidge
+from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, explained_variance_score
@@ -14,7 +17,7 @@ setSize = 40
 data = config.data
 yIndex = config.yIndex
 randomState = config.randomState
-model = "BRR"
+model = "GPR"
 
 # Automating file creation
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
@@ -22,7 +25,8 @@ output = "Film Thickness" if yIndex == -2 else "NTi"
 
 directory = f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}"
 os.makedirs(directory, exist_ok=True)
-with open(f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{model} Random_{randomState} Metric Iteration Evaluation.txt", "w") as f:
+with open(
+        f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{model} Random_{randomState} Metric Iteration Evaluation.txt", "w") as f:
     # Write headers
     f.write("MSE, RMSE, MAPE, EV, and R^2 Metrics\n")
     f.write(f"Current Model Dataset: {data}\n")
@@ -32,8 +36,7 @@ with open(f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{
     while setSize != 0:
         df = pd.read_csv(data)
         x = df.iloc[:, :-2].values
-        # Selecting output
-        y = df.iloc[:, yIndex].values
+        y = df.iloc[:, yIndex].values   # Selecting output
 
         # 80% data to train, 20% leave for testing. random_state is set in config
         trainSize = min(setSize, int(0.8 * len(x)), len(x))
@@ -46,17 +49,18 @@ with open(f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{
         xTrainScaled = dataScaler.fit_transform(xTrainLog)
         xTestScaled = dataScaler.transform(xTestLog)
 
-        # Init BRR model
-        brr = BayesianRidge()
-        brr.fit(xTrainScaled, yTrain)
+        # Init GPR model, ADJUST HYPERPARAMETERS
+        gprKernel = ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5)
+        gpr = GaussianProcessRegressor(alpha=0.01, kernel=gprKernel, n_restarts_optimizer=10, normalize_y=True, optimizer="fmin_l_bfgs_b")
+        gpr.fit(xTrainScaled, yTrain)
 
         # Initial predictions
-        yPredict = brr.predict(xTestScaled)
+        yPredict = gpr.predict(xTestScaled)
         mseCurrent = mean_squared_error(yTest, yPredict)
         rmseCurrent = np.sqrt(mseCurrent)
         mapeCurrent = np.mean(np.abs((yTest - yPredict) / yTest))
         evCurrent = explained_variance_score(yTest, yPredict)
-        currentModelScore = brr.score(xTestScaled, yTest)
+        currentModelScore = gpr.score(xTestScaled, yTest)
 
         # Write metrics
         f.write(f"Current Model Training Size: {setSize}\n")
@@ -72,9 +76,10 @@ with open(f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{
         # directory = f"Regression Model Data and Metrics/Starter Models/{datasetModels}/{output}/{model}/"
         # modelName = f"{model.lower()}_model_{setSize}.pkl"
         # os.makedirs(directory, exist_ok=True)
-        # joblib.dump(brr, os.path.join(directory, modelName))
+        # joblib.dump(gpr, os.path.join(directory, modelName))
         # print("Saved!")
 
         setSize -= 5
+
 
 

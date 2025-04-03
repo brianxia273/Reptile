@@ -1,12 +1,13 @@
-# Generating augmented data with SVR regression model
-# NOTE: MUST ADJUST SVR HYPERPARAMETERS FOR BEST PERFORMANCE
+# Generating augmented data with GPR regression model
+# NOTE: MUST ADJUST GPR HYPERPARAMETERS FOR BEST PERFORMANCE
 # NOTE: INTERPOLATED/EXTRAPOLATED DATA RATIO IS APPROXIMATED, NOT A PRECISE RATIO
 
 import numpy as np
 import pandas as pd
 import os
+from sklearn.gaussian_process.kernels import ConstantKernel, Matern
 import config
-from sklearn.svm import SVR
+from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
@@ -15,7 +16,7 @@ setSize = config.size
 data = config.data
 yIndex = config.yIndex
 randomState = config.randomState
-model = "SVR"
+model = "GPR"
 extrapolationRange = config.extrapolationRange
 
 # Automating file creation
@@ -40,9 +41,11 @@ dataScaler = MinMaxScaler(feature_range=(-1, 1))
 xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
-# Init SVR model
-svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS HERE
-svr.fit(xTrainScaled, yTrain)
+# Init GPR model
+
+gprKernel = ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5)
+gpr = GaussianProcessRegressor(alpha=0.01, kernel=gprKernel, n_restarts_optimizer=10, normalize_y=True, optimizer="fmin_l_bfgs_b")
+gpr.fit(xTrainScaled, yTrain)
 
 
 # Interpolation and Extrapolation
@@ -56,7 +59,7 @@ totalAugmentedX = 1028
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
 xAugmentedScaled = dataScaler.transform(xAugmentedLog)
-yAugmented = svr.predict(xAugmentedScaled)
+yAugmented = gpr.predict(xAugmentedScaled)
 xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 

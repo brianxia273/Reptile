@@ -46,7 +46,7 @@ xMin = x.min(axis=0)
 xMax = x.max(axis=0)
 xMin = xMin - 0.03 * (xMax - xMin)
 xMax = xMax + 0.03 * (xMax - xMin)
-totalAugmentedX = 822
+totalAugmentedX = 1028
 # 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
@@ -58,7 +58,7 @@ yColumn = np.array(yAugmented)
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
 dfCSV.to_csv(f"{directory}/{model} Size_{setSize} Random_{randomState} Augmented Data.csv", index= False, header=False)
 
-print(f"Saved {model} Size_{setSize} Random_{randomState} Augmented Data! randomState: {randomState}")
+print(f"Saved {model} Size_{setSize} Random_{randomState} Augmented Data!")
 
 
 
