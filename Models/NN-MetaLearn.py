@@ -3,10 +3,9 @@
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
+from tensorflow.keras.losses import MeanSquaredError
 import pandas as pd
 import config
 import os
@@ -18,6 +17,7 @@ metaBatchSize = config.metaBatchSize
 metaTasks = config.metaTasks
 metaEpochs = config.metaEpochs
 
+nnSize = config.nnSize
 nnEpoch = config.nnEpoch
 nnBatch = config.nnBatch
 nn = config.nn
@@ -25,12 +25,13 @@ nn = config.nn
 adSize = config.adSize
 adData = config.adData
 adYIndex = config.adYIndex
+adNumber = config.adNumber
 
 output = "Film Thickness" if adYIndex == -2 else "NTi"
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in adData else "Dataset 2 Models"
 
 # Load and normalize augmented data
-augmentedData = pd.read_csv(f"Regression Model Data and Metrics/{datasetModels}/{output}/Merged/Merged Size_{adSize} Augmented Data.csv")
+augmentedData = pd.read_csv(f"Regression Model Data and Metrics/{datasetModels}/{output}/Merged/Merged #{adNumber} Size_{adSize} Augmented Data.csv")
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values
 
@@ -40,7 +41,7 @@ xLog = np.log1p(x)
 xScaled = dataScaler.fit_transform(xLog)
 
 # Load pre-trained neural network, set optimizer
-nnModelPath = f"Pretrained Neural Networks/{nn}/{datasetModels}/{output}/Pre-Trained NN - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
+nnModelPath = f"Pre-Trained Neural Networks/{nn}/{datasetModels}/{output}/Pre-Trained NN - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 nnModel = load_model(nnModelPath)
 optimizer = Adam(learning_rate=innerLearningRate)
 
@@ -54,11 +55,12 @@ for metaIter in range(metaTasks):
     yBatch = y[miniBatchIndices]
     # Inner Loop Training (x does not get used)
     for x in range(metaEpochs):
-        # Record computations, to later compute gradients/derivatives
+        # Record MSE computations, to later compute gradients/derivatives
         with tf.GradientTape() as tape:
             # Calculate LMSE of predicted and actual output
             predictions = nnModel(xBatchScaled)
-            lmseLoss  = tf.keras.losses.mean_squared_error(yBatch, predictions)
+            mse = MeanSquaredError()
+            lmseLoss  = mse(yBatch, predictions)
         # Compute gradients/derivatives of MSE equation, tells us direction/magnitude to minimize loss. Multiply by loss function, add onto weight
         gradients = tape.gradient(lmseLoss, nnModel.trainable_weights)
         # Pair gradients and trainable weights, updates weights of NN by adding (innerLearningRate)*(gradients) to weights

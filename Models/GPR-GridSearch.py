@@ -1,14 +1,15 @@
-# GridSearch and graph for best hyperparameters of SVR regression model for different randomStates
+# GridSearch and graph for best hyperparameters of GPR regression model for different randomStates
 
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.gaussian_process.kernels import ConstantKernel, Matern
 import config
-from sklearn.svm import SVR
+from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error,  explained_variance_score
+from sklearn.metrics import mean_squared_error,  explained_variance_score
 
 
 # Select size, dataset, output, and randomState from config
@@ -35,28 +36,38 @@ xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
 # GridSearchCV finding optimal hyperparameters, with cross-validation
-paramGrid = {
-    'C': [0.01, 0.1, 1, 10, 100, 1000, 2000, 5000, 5010],
-    'kernel': ['linear', 'rbf'],
-    'gamma': ['scale', 'auto',  0.01, 0.1, 1, 10, 100,],
-    'epsilon': [0.00009, 0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.5]
-}
-gridSearch = GridSearchCV(SVR(), paramGrid, cv=5, scoring='r2', n_jobs=-1)
+param_grid = {
+            "kernel": [
+                ConstantKernel(1.0) * Matern(length_scale=50, nu=1.5),
+                # Matern kernel with length_scale=50, nu=1.5 (previously successful)
+                ConstantKernel(1.0) * Matern(length_scale=75, nu=1.5),
+                ConstantKernel(1.0) * Matern(length_scale=60, nu=1.5),
+                ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5),
+                ConstantKernel(1.0) * Matern(length_scale=55, nu=3.0),
+                ConstantKernel(1.0) * Matern(length_scale=50, nu=0.5),
+                ConstantKernel(1.0) * Matern(length_scale=50, nu=2.5),
+            ],
+            "alpha": [1e-4, 1e-2, 1e-3],
+            "n_restarts_optimizer": [5, 10, 20],
+            "normalize_y": [True],
+            "optimizer": ["fmin_l_bfgs_b"],
+        }
+gridSearch = GridSearchCV(GaussianProcessRegressor(), param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
 gridSearch.fit(xTrainScaled, yTrain)
-print("Best SVR Parameters:", gridSearch.best_params_)
-bestSVR = gridSearch.best_estimator_
-trainScore = bestSVR.score(xTrainScaled, yTrain)
+print("Best GPR Parameters:", gridSearch.best_params_)
+bestGPR = gridSearch.best_estimator_
+trainScore = bestGPR.score(xTrainScaled, yTrain)
 print("Train Set Score (R^2):", trainScore)
-testScore = bestSVR.score(xTestScaled, yTest)
+testScore = bestGPR.score(xTestScaled, yTest)
 print("Test Set Score (R^2):", testScore)
 
-# SVR model making predictions
-yPredict = bestSVR.predict(xTestScaled)
+# GPR model making predictions
+yPredict = bestGPR.predict(xTestScaled)
 mseCurrent = mean_squared_error(yTest, yPredict)
 rmseCurrent = np.sqrt(mseCurrent)
 mapeCurrent = np.mean(np.abs((yTest - yPredict) / yTest))
 evCurrent = explained_variance_score(yTest, yPredict)
-currentModelScore = bestSVR.score(xTestScaled, yTest)
+currentModelScore = bestGPR.score(xTestScaled, yTest)
 print("Current Model Dataset:", data)
 print("Current Model Training Size:",setSize)
 print("Random State:",randomState)
@@ -73,8 +84,8 @@ sns.scatterplot(x=yTest, y=yPredict, color="blue", s=50, edgecolor='black', alph
 min_val = min(min(yTest), min(yPredict))
 max_val = max(max(yTest), max(yPredict))
 plt.plot([min_val, max_val], [min_val, max_val], 'r--', lw=2, label="Perfect Fit (y = x)")
-plt.title("SVR Model - " + ("Film-Thickness" if yIndex == -2 else "N/Ti Ratio"), fontsize=16)
+plt.title("GPR Model - " + ("Film-Thickness" if yIndex == -2 else "N/Ti Ratio"), fontsize=16)
 plt.xlabel("Measurements", fontsize=14)
-plt.ylabel("SVR Predictions", fontsize=14)
+plt.ylabel("GPR Predictions", fontsize=14)
 plt.legend()
 plt.show()
