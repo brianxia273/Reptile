@@ -10,11 +10,12 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error,  explained_variance_score
+import os
 
 
 # Select size, dataset, output, and randomState from config
 setSize = config.size
-data = config.data
+data = os.path.join("Datasets" , config.data)
 yIndex = config.yIndex
 randomState = config.randomState
 

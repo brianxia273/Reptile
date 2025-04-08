@@ -1,22 +1,21 @@
-# Generating augmented data with GPR regression model
-# NOTE: MUST ADJUST GPR HYPERPARAMETERS FOR BEST PERFORMANCE
+# Generating augmented data with SVR regression model, with extrapolation for pre-training
+# NOTE: MUST ADJUST SVR HYPERPARAMETERS FOR BEST PERFORMANCE
 # NOTE: INTERPOLATED/EXTRAPOLATED DATA RATIO IS APPROXIMATED, NOT A PRECISE RATIO
 
 import numpy as np
 import pandas as pd
 import os
-from sklearn.gaussian_process.kernels import ConstantKernel, Matern
 import config
-from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # Select size, dataset, output, and randomState from config
 setSize = config.size
-data = os.path.join("Datasets" , config.data)
+data = os.path.join("Datasets", config.data)
 yIndex = config.yIndex
 randomState = config.randomState
-model = "GPR"
+model = "SVR"
 extrapolationRange = config.extrapolationRange
 
 # Automating file creation
@@ -41,32 +40,31 @@ dataScaler = MinMaxScaler(feature_range=(-1, 1))
 xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
-# Init GPR model
-gprKernel = ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5)
-gpr = GaussianProcessRegressor(alpha=0.01, kernel=gprKernel, n_restarts_optimizer=10, normalize_y=True, optimizer="fmin_l_bfgs_b")
-gpr.fit(xTrainScaled, yTrain)
+# Init SVR model
+svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS HERE
+svr.fit(xTrainScaled, yTrain)
 
-# Interpolation
+
+# Interpolation and Extrapolation
 xMin = x.min(axis=0)
 xMax = x.max(axis=0)
-# GPR will not extrapolate
-# xMin = xMin - extrapolationRange * (xMax - xMin)
-# xMax = xMax + extrapolationRange * (xMax - xMin)
+xMin = xMin - extrapolationRange * (xMax - xMin)
+xMax = xMax + extrapolationRange * (xMax - xMin)
 totalAugmentedX = 1028
-# 1028 points total.
+# Around 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total.
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
 xAugmentedScaled = dataScaler.transform(xAugmentedLog)
-yAugmented = gpr.predict(xAugmentedScaled)
+yAugmented = svr.predict(xAugmentedScaled)
 xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-saveDirectory = os.path.join(directory, f"{model} Size_{setSize} Random_{randomState} Augmented Data.csv")
+saveDirectory = os.path.join(directory, f"{model} InterExtra Size_{setSize} Random_{randomState} Augmented Data.csv")
 dfCSV.to_csv(saveDirectory, index= False, header=False)
 
-print(f"Saved {model} Size_{setSize} Random_{randomState} Augmented Data!")
+print(f"Saved {model} InterExtra Size_{setSize} Random_{randomState} Augmented Data!")
 
 
 

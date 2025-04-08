@@ -1,7 +1,8 @@
-# Optimization-based meta-learning for neural network models using SVR, BRR, and GPR augmented data
+# Optimization-based first-order meta-learning for neural network models using SVR, BRR, and GPR augmented data
 
 import numpy as np
 import tensorflow as tf
+from kivy.tools.packaging.pyinstaller_hooks import datas
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
@@ -23,7 +24,7 @@ nnBatch = config.nnBatch
 nn = config.nn
 
 adSize = config.adSize
-adData = config.adData
+adData = os.path.join("Datasets" , config.adData)
 adYIndex = config.adYIndex
 adNumber = config.adNumber
 
@@ -31,7 +32,8 @@ output = "Film Thickness" if adYIndex == -2 else "NTi"
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in adData else "Dataset 2 Models"
 
 # Load and normalize augmented data
-augmentedData = pd.read_csv(f"Regression Model Data and Metrics/{datasetModels}/{output}/Merged/Merged #{adNumber} Size_{adSize} Augmented Data.csv")
+augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",f"Merged #{adNumber} Size_{adSize} Augmented Data.csv")
+augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values
 
@@ -41,7 +43,7 @@ xLog = np.log1p(x)
 xScaled = dataScaler.fit_transform(xLog)
 
 # Load pre-trained neural network, set optimizer
-nnModelPath = f"Pre-Trained Neural Networks/{nn}/{datasetModels}/{output}/Pre-Trained NN - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
+nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, output, f"Pre-Trained {nn} - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
 nnModel = load_model(nnModelPath)
 optimizer = Adam(learning_rate=innerLearningRate)
 
@@ -75,11 +77,11 @@ for metaIter in range(metaTasks):
         print(f"Meta-iteration {metaIter}: Loss = {np.mean(lmseLoss.numpy()):.6f}")
 
 # Save trained model
-directory = f"Meta-Trained Neural Networks/{nn}/{datasetModels}/{output}/"
+directory = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output)
 os.makedirs(directory, exist_ok=True)
 trainedModelName = f"Meta-Trained {nn} - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
-nnModel.save(directory + trainedModelName)
-print("Saved " + directory + trainedModelName + "!")
+nnModel.save(os.path.join(directory, trainedModelName))
+print("Saved " + os.path.join(directory, trainedModelName) + "!")
 
 # Visualize results - to be added
 

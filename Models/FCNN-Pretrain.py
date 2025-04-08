@@ -1,4 +1,5 @@
-# Pretraining Fully Connected Neural Network Model using SVG augmented data
+# Pre-training Fully Connected Neural Network Model using SVG InterExtra augmented data
+# Pre-trained on both interpolated and extrapolated data
 
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -14,7 +15,7 @@ import os
 setSize = config.nSize
 yIndex = config.nYIndex
 randomState = config.nRandomState
-data = config.nData
+data = os.path.join("Datasets", config.nData)
 model = "SVR"
 epochs = config.epochs
 batchSize = config.batchSize
@@ -33,7 +34,9 @@ datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Model
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import Augmented Data CSV file
-augmentedData = pd.read_csv(f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}/{model} Size_{setSize} Random_{randomState} Augmented Data.csv")
+augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model,
+                                f"{model} InterExtra Size_{setSize} Random_{randomState} Augmented Data.csv")
+augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values
 
@@ -49,11 +52,11 @@ fcnnModel = constructModelLayers()
 history = fcnnModel.fit(xScaled, y, epochs= epochs, batch_size = batchSize, verbose = 1)
 
 # Print history
-print("Training Loss:", history.history['loss'])
+# print("Training Loss:", history.history['loss'])
 
 # Save FCNN
-directory = f"Pre-Trained Neural Networks/FCNN/{datasetModels}/{output}/"
+directory = os.path.join("Pre-Trained Neural Networks", "FCNN", datasetModels, output)
 os.makedirs(directory, exist_ok=True)
 modelName = f"Pre-Trained NN - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
-fcnnModel.save(directory + modelName)
-print("Saved " + directory + modelName + "!")
+fcnnModel.save(os.path.join(directory, modelName))
+print("Saved " + os.path.join(directory, modelName) + "!")
