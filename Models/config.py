@@ -45,6 +45,17 @@ adNumber: int = 1 # Merged Dataset number
 # ================================================================================
 # ================================================================================
 
+# Neural Network FineTune Configuration
+ftLearningRate: float = 0.2 # {0.05, 0.2}
+ftEpochs: int = 200 # {5, 10, 100, 200}
+ftNN: str = "FCNN"
+ftYIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
+ftData: str = "Datasets/Nitride (Dataset 1) NTi.csv"
+ftBatchSize: int = 20 # {5, 20}
+ftSize: int = 40
+
+# ================================================================================
+# ================================================================================
 
 # AVAILABLE DATASETS:
     # Datasets/FullData.csv
