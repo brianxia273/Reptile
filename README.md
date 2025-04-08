@@ -105,7 +105,7 @@ Example files and sub-directories are shown above.
 
 ## **Organization**
 
-*Adjust parameters in *config.py*, and replace datasets as necessary
+*Adjust parameters in **config.py**, and replace datasets as necessary
 
 ## 1. Linear Regression Model Evaluation
 - SVR-GridSearch.py
