@@ -109,17 +109,17 @@ Example files and sub-directories are shown above.
 
 ## 1. Linear Regression Model Evaluation
 - SVR-GridSearch.py
-  SVR-WriteMetrics.py
+- SVR-WriteMetrics.py
   
 - BRR-WriteMetrics.py
   
 - GPR-GridSearch.py
-  GPR-WriteMetrics.py
+- GPR-WriteMetrics.py
 
 
 ## 2. Augmented Data Generation
 - SVR-DataGenerate.py
-  SVR-InterExtraDataGenerate.py
+- SVR-InterExtraDataGenerate.py
   
 - BRR-DataGenerate.py
   
