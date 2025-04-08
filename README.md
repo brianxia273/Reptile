@@ -1,4 +1,4 @@
-# **Neural Network Generator for Reactive Sputtering Experiments**
+# **Neural Network Constructor for Reactive Sputtering Experiments**
 _ReadMe Last Updated: 4/8/25_
 
 ## **Overview**
