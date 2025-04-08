@@ -1,6 +1,5 @@
-# Generating augmented data with SVR regression model
+# Generating augmented data with SVR regression model, without extrapolation for meta-learning
 # NOTE: MUST ADJUST SVR HYPERPARAMETERS FOR BEST PERFORMANCE
-# NOTE: INTERPOLATED/EXTRAPOLATED DATA RATIO IS APPROXIMATED, NOT A PRECISE RATIO
 
 import numpy as np
 import pandas as pd
@@ -12,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Select size, dataset, output, and randomState from config
 setSize = config.size
-data = config.data
+data = os.path.join("Datasets" , config.data)
 yIndex = config.yIndex
 randomState = config.randomState
 model = "SVR"
@@ -22,7 +21,7 @@ extrapolationRange = config.extrapolationRange
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
-directory = f"Regression Model Data and Metrics/{datasetModels}/{output}/{model}"
+directory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model)
 os.makedirs(directory, exist_ok=True)
 df = pd.read_csv(data)
 x = df.iloc[:, :-2].values
@@ -45,13 +44,14 @@ svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPA
 svr.fit(xTrainScaled, yTrain)
 
 
-# Interpolation and Extrapolation
+# Interpolation
 xMin = x.min(axis=0)
 xMax = x.max(axis=0)
-xMin = xMin - extrapolationRange * (xMax - xMin)
-xMax = xMax + extrapolationRange * (xMax - xMin)
+# No extrapolation
+# xMin = xMin - extrapolationRange * (xMax - xMin)
+# xMax = xMax + extrapolationRange * (xMax - xMin)
 totalAugmentedX = 1028
-# Around 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total.
+# 1028 points total.
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
@@ -61,7 +61,8 @@ xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-dfCSV.to_csv(f"{directory}/{model} Size_{setSize} Random_{randomState} Augmented Data.csv", index= False, header=False)
+saveDirectory = os.path.join(directory, f"{model} Size_{setSize} Random_{randomState} Augmented Data.csv")
+dfCSV.to_csv(saveDirectory, index= False, header=False)
 
 print(f"Saved {model} Size_{setSize} Random_{randomState} Augmented Data!")
 
