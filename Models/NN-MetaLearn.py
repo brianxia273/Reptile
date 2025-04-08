@@ -77,7 +77,7 @@ for metaIter in range(metaTasks):
 # Save trained model
 directory = f"Meta-Trained Neural Networks/{nn}/{datasetModels}/{output}/"
 os.makedirs(directory, exist_ok=True)
-trainedModelName = f"Meta-Trained NN - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
+trainedModelName = f"Meta-Trained {nn} - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 nnModel.save(directory + trainedModelName)
 print("Saved " + directory + trainedModelName + "!")
 
