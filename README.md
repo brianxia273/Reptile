@@ -105,39 +105,39 @@ Example files and sub-directories are shown above.
 
 ## **Organization of Scripts in Pipeline**
 
-*Adjust parameters in **config.py**, and replace datasets as necessary
+*Adjust parameters in `config.py`, and replace datasets as necessary
 
 ## 1. Linear Regression Model Evaluation
-- SVR-GridSearch.py
-- SVR-WriteMetrics.py
+- `SVR-GridSearch.py`
+- `SVR-WriteMetrics.py`
   
-- BRR-WriteMetrics.py
+- `BRR-WriteMetrics.py`
   
-- GPR-GridSearch.py
-- GPR-WriteMetrics.py
+- `GPR-GridSearch.py`
+- `GPR-WriteMetrics.py`
 
 
 ## 2. Augmented Data Generation
-- SVR-DataGenerate.py
-- SVR-InterExtraDataGenerate.py
+- `SVR-DataGenerate.py`
+- `SVR-InterExtraDataGenerate.py`
   
-- BRR-DataGenerate.py
+- `BRR-DataGenerate.py`
   
-- GPR-DataGenerate.py
+- `GPR-DataGenerate.py`
   
-- RegressionModels-DataMerger.py
+- `RegressionModels-DataMerger.py`
 
 
 ## 3. Defining and Pre-Training Neural Network Archetypes
-- FCNN-Pretrain.py
+- `FCNN-Pretrain.py`
 
 
 ## 4. Meta-Training Neural Networks using Reptile Algorithm
-- NN-MetaLearn.py
+- `NN-MetaLearn.py`
 
 
 ## 5. Fine-Tuning for Real-World Usage
-- NN-FineTune.py
+- `NN-FineTune.py`
 
 ---
 ## **How to Use**
