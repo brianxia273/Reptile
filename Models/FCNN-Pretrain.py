@@ -3,10 +3,9 @@
 
 import numpy as np
 from keras.src.layers import BatchNormalization, Dropout
-from mediapipe.tasks.python.metadata.metadata_writers.image_segmenter import Activation
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Activation
 from tensorflow.keras.optimizers import Adam
 from keras.initializers import RandomNormal
 from keras.regularizers import l1_l2
@@ -32,13 +31,13 @@ def constructModelLayers():
     model.add(Dense(4, input_dim=8, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.1))
 
     # Hidden Layer 2
     model.add(Dense(4, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.2))
 
     # Output Layer
     model.add(Dense(1, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))

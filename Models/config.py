@@ -19,7 +19,7 @@ nSize: int = 40
 nData: str = "Nitride (Dataset 1) NTi.csv"
 nRandomState: int = 47 # Selecting randomState of SVG augmented data
 nYIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
-learningRate: float = 0.01 # NEED TO DOUBLE-CHECK
+learningRate: float = 0.05 # NEED TO DOUBLE-CHECK
 epochs: int = 1000 # {20, 200, 1000}
 batchSize: int = 1028 # {16, 512, 1028}
 

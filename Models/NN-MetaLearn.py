@@ -2,7 +2,6 @@
 
 import numpy as np
 import tensorflow as tf
-from kivy.tools.packaging.pyinstaller_hooks import datas
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
