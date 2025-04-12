@@ -2,10 +2,14 @@
 # Pre-trained on both interpolated and extrapolated data
 
 import numpy as np
+from keras.src.layers import BatchNormalization, Dropout
+from mediapipe.tasks.python.metadata.metadata_writers.image_segmenter import Activation
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+from keras.initializers import RandomNormal
+from keras.regularizers import l1_l2
 import pandas as pd
 import config
 import os
@@ -23,9 +27,24 @@ learningRate = config.learningRate
 
 def constructModelLayers():
     model = Sequential()
-    model.add(Dense(4, input_dim=8, activation='relu')) # 8 input nodes, into Hidden Layer 1
-    model.add(Dense(4, activation='relu')) # Hidden Layer 2
-    model.add(Dense(1, activation='linear')) # Output Layer
+
+    # 8 input nodes, into Hidden Layer 1
+    model.add(Dense(4, input_dim=8, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.3))
+
+    # Hidden Layer 2
+    model.add(Dense(4, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.3))
+
+    # Output Layer
+    model.add(Dense(1, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    model.add(BatchNormalization())
+    model.add(Activation('linear'))
+
     model.compile(optimizer=Adam(learning_rate=learningRate), loss='mean_squared_error')
     return model
 
