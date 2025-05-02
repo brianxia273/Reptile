@@ -13,16 +13,18 @@ import os
 nn = config.ftNN
 yIndex = config.ftYIndex
 data = os.path.join("Datasets" , config.ftData)
+nnEpoch = config.ftNNEpochs
+nnBatch = config.ftNNBatch
 epochs = config.ftEpochs
 batchSize = config.ftBatchSize
-setSize = config.ftSize
+setSize = config.ftNNSize
 learningRate = config.ftLearningRate
 
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
-mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output, f"Meta-Trained {nn} - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras")
+mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output, f"Meta-Trained {nn} - Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
 mlModel.compile(optimizer=Adam(learning_rate=learningRate), loss='mse')
 

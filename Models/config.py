@@ -46,13 +46,32 @@ adNumber: int = 1 # Merged Dataset number (1, 2, 3, etc.)
 # ================================================================================
 
 # Neural Network FineTune Configuration
+
 ftLearningRate: float = 0.2 # {0.05, 0.2}
 ftEpochs: int = 200 # {5, 10, 100, 200}
-ftNN: str = "FCNN"
 ftYIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
 ftData: str = "Nitride (Dataset 1) NTi.csv"
 ftBatchSize: int = 20 # {5, 20}
-ftSize: int = 40
+
+ftNN: str = "FCNN"
+ftNNSize: int = 40
+ftNNEpochs: int = 1000 # {20, 200, 1000}
+ftNNBatch: int = 1028 # {16, 512, 1028}
+
+# ================================================================================
+# ================================================================================
+
+# Neural Network TestAccuracy Configuration
+
+taData: str = "Nitride (Dataset 1) NTi.csv"
+taYIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
+
+# Need to adjust epoch and batch
+taNN: str = "FCNN"
+taNNSize: int = 40
+taNNEpochs: int = 1000 # {20, 200, 1000}
+taNNBatch: int = 1028 # {16, 512, 1028}
+
 
 # ================================================================================
 # ================================================================================

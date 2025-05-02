@@ -75,6 +75,6 @@ history = fcnnModel.fit(xScaled, y, epochs= epochs, batch_size = batchSize, verb
 # Save FCNN
 directory = os.path.join("Pre-Trained Neural Networks", "FCNN", datasetModels, output)
 os.makedirs(directory, exist_ok=True)
-modelName = f"Pre-Trained NN - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
+modelName = f"Pre-Trained FCNN - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
 fcnnModel.save(os.path.join(directory, modelName))
 print("Saved " + os.path.join(directory, modelName) + "!")
