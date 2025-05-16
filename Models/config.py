@@ -6,7 +6,7 @@
 # Phase 1: WriteMetrics, DataGenerate, and GridSearch Configuration
 p1Size: int = 40
 p1Data: str = "Nitride (Dataset 1) NTi.csv"
-p1RandomState: int = 47
+p1RandomState: int = 44
 p1YIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
 
 p1SvrExtrapolationRange: float = 0.03
@@ -29,10 +29,10 @@ p2N: int = 6400 # N = Augmented Data Count, {6400, 12800, 25600}
 # ================================================================================
 
 # Phase 3: NN MetaLearn Configuration
-p3MetaTasks: int = 2000 # {50, 100, 1000, 2000}
 p3MetaStepSize: float = 0.2 # {0.05, 0.2}
-p3MetaBatchSize: int = 20 # {5, 20}
 p3MetaEpochs: int = 200 # {5, 10, 100, 200}
+p3MetaTasks: int = 2000 # {50, 100, 1000, 2000}
+p3MetaBatchSize: int = 20 # {5, 20}
 p3InnerStepSize: float = 0.01 # NEED TO DOUBLE-CHECK
 
 # Choosing Pre-Trained NN using its parameters
@@ -52,7 +52,7 @@ p3N: int = 6400 # N {6400, 12800, 25600}
 
 # Phase 4: Neural Network FineTune Configuration
 
-p4LearningRate: float = 0.2 # {0.05, 0.2} - Is same as MetaLearn
+p4LearningRate: float = 0.2 # {0.05, 0.2} - Is same as MetaLearn (?)
 p4Epochs: int = 200 # {5, 10, 100, 200} - Is same as MetaLearn
 p4YIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
 p4Data: str = "Nitride (Dataset 1) NTi.csv"

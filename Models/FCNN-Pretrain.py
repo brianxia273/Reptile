@@ -54,7 +54,7 @@ output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import Augmented Data CSV file
 augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model,
-                                f"{model} (PreTrain) N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
+                                f"{model} PreTrain N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
 augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values

@@ -30,7 +30,7 @@ augmentedDataCount: int = 6400 # N {6400, 12800, 25600}
 data = os.path.join("Datasets", data)
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
-svrDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "SVR", f"SVR (MetaTrain) N_{augmentedDataCount} Size_{setSize} Random_{svrDataRS} Augmented Data.csv")
+svrDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "SVR", f"SVR MetaTrain N_{augmentedDataCount} Size_{setSize} Random_{svrDataRS} Augmented Data.csv")
 brrDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "BRR", f"BRR N_{augmentedDataCount} Size_{setSize} Random_{brrDataRS} Augmented Data.csv")
 gprDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "GPR", f"GPR N_{augmentedDataCount} Size_{setSize} Random_{gprDataRS} Augmented Data.csv")
 
