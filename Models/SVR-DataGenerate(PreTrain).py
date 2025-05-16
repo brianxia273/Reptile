@@ -11,12 +11,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # Select size, dataset, output, and randomState from config
-setSize = config.size
-data = os.path.join("Datasets", config.data)
-yIndex = config.yIndex
-randomState = config.randomState
+setSize = config.p1Size
+data = os.path.join("Datasets", config.p1Data)
+yIndex = config.p1YIndex
+randomState = config.p1RandomState
 model = "SVR"
-extrapolationRange = config.extrapolationRange
+extrapolationRange = config.p1SvrExtrapolationRange
+augmentedDataCount = config.p1N
 
 # Automating file creation
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
@@ -44,14 +45,12 @@ xTestScaled = dataScaler.transform(xTestLog)
 svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS HERE
 svr.fit(xTrainScaled, yTrain)
 
-
 # Interpolation and Extrapolation
 xMin = x.min(axis=0)
 xMax = x.max(axis=0)
 xMin = xMin - extrapolationRange * (xMax - xMin)
 xMax = xMax + extrapolationRange * (xMax - xMin)
-totalAugmentedX = 1028
-# Around 6% Extrapolated (62 points), 94% Interpolated (966 points). 1028 points total.
+totalAugmentedX = augmentedDataCount
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
@@ -61,10 +60,10 @@ xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-saveDirectory = os.path.join(directory, f"{model} InterExtra Size_{setSize} Random_{randomState} Augmented Data.csv")
+saveDirectory = os.path.join(directory, f"{model} (PreTrain) N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
 dfCSV.to_csv(saveDirectory, index= False, header=False)
 
-print(f"Saved {model} InterExtra Size_{setSize} Random_{randomState} Augmented Data!")
+print(f"Saved {model} (PreTrain) N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
 
 
 

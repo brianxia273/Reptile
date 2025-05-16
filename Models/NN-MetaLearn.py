@@ -11,27 +11,28 @@ import config
 import os
 
 # Select hyperparameters from config
-innerLearningRate = config.innerLearningRate
-metaStepSize = config.metaStepSize # Same as outer-loop learning rate, interchangeable terms
-metaBatchSize = config.metaBatchSize
-metaTasks = config.metaTasks
-metaEpochs = config.metaEpochs
+innerStepSize = config.p3InnerStepSize
+metaStepSize = config.p3MetaStepSize # Same as outer-loop learning rate, interchangeable terms
+metaBatchSize = config.p3MetaBatchSize
+metaTasks = config.p3MetaTasks
+metaEpochs = config.p3MetaEpochs
 
-nnSize = config.nnSize
-nnEpoch = config.nnEpoch
-nnBatch = config.nnBatch
-nn = config.nn
+nnSize = config.p3NNSize
+nnEpoch = config.p3NNEpoch
+nnBatch = config.p3NNBatch
+nn = config.p3NN
 
-adSize = config.adSize
-adData = os.path.join("Datasets" , config.adData)
-adYIndex = config.adYIndex
-adNumber = config.adNumber
+adSize = config.p3Size
+adData = os.path.join("Datasets" , config.p3Data)
+adYIndex = config.p3YIndex
+adNumber = config.p3Number
+augmentedDataCount = config.p3N
 
 output = "Film Thickness" if adYIndex == -2 else "NTi"
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in adData else "Dataset 2 Models"
 
 # Load and normalize augmented data
-augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",f"Merged #{adNumber} Size_{adSize} Augmented Data.csv")
+augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",f"Merged N_{augmentedDataCount} Size_{adSize} #{adNumber}  Augmented Data.csv")
 augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values
@@ -42,9 +43,9 @@ xLog = np.log1p(x)
 xScaled = dataScaler.fit_transform(xLog)
 
 # Load pre-trained neural network, set optimizer
-nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, output, f"Pre-Trained {nn} - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
+nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, output, f"Pre-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
 nnModel = load_model(nnModelPath)
-optimizer = Adam(learning_rate=innerLearningRate)
+optimizer = Adam(learning_rate=innerStepSize)
 
 # Meta-Iteration Loop
 for metaIter in range(metaTasks):
@@ -78,7 +79,7 @@ for metaIter in range(metaTasks):
 # Save trained model
 directory = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output)
 os.makedirs(directory, exist_ok=True)
-trainedModelName = f"Meta-Trained {nn} - Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
+trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 nnModel.save(os.path.join(directory, trainedModelName))
 print("Saved " + os.path.join(directory, trainedModelName) + "!")
 

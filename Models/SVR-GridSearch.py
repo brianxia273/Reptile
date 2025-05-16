@@ -12,10 +12,10 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error,  explained_
 import os
 
 # Select size, dataset, output, and randomState from config
-setSize = config.size
-data = os.path.join("Datasets" , config.data)
-yIndex = config.yIndex
-randomState = config.randomState
+setSize = config.p1Size
+data = os.path.join("Datasets" , config.p1Data)
+yIndex = config.p1YIndex
+randomState = config.p1RandomState
 
 # Selecting dataset columns
 df = pd.read_csv(data)
