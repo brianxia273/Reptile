@@ -15,14 +15,15 @@ import os
 
 
 # Select size, dataset, output, randomState, data, epochs, and batch size from config
-setSize = config.nSize
-yIndex = config.nYIndex
-randomState = config.nRandomState
-data = os.path.join("Datasets", config.nData)
+setSize = config.p2Size
+yIndex = config.p2YIndex
+randomState = config.p2RandomState
+data = os.path.join("Datasets", config.p2Data)
 model = "SVR"
-epochs = config.epochs
-batchSize = config.batchSize
-learningRate = config.learningRate
+epochs = config.p2Epochs
+batchSize = config.p2BatchSize
+learningRate = config.p2LearningRate
+augmentedDataCount = config.p2N
 
 def constructModelLayers():
     model = Sequential()
@@ -53,7 +54,7 @@ output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import Augmented Data CSV file
 augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model,
-                                f"{model} InterExtra Size_{setSize} Random_{randomState} Augmented Data.csv")
+                                f"{model} (PreTrain) N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
 augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values
@@ -75,6 +76,6 @@ history = fcnnModel.fit(xScaled, y, epochs= epochs, batch_size = batchSize, verb
 # Save FCNN
 directory = os.path.join("Pre-Trained Neural Networks", "FCNN", datasetModels, output)
 os.makedirs(directory, exist_ok=True)
-modelName = f"Pre-Trained FCNN - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
+modelName = f"Pre-Trained FCNN - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
 fcnnModel.save(os.path.join(directory, modelName))
 print("Saved " + os.path.join(directory, modelName) + "!")

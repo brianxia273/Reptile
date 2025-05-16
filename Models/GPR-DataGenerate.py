@@ -12,12 +12,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # Select size, dataset, output, and randomState from config
-setSize = config.size
-data = os.path.join("Datasets" , config.data)
-yIndex = config.yIndex
-randomState = config.randomState
+setSize = config.p1Size
+data = os.path.join("Datasets" , config.p1Data)
+yIndex = config.p1YIndex
+randomState = config.p1RandomState
 model = "GPR"
-extrapolationRange = config.extrapolationRange
+augmentedDataCount = config.p1N
 
 # Automating file creation
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
@@ -49,11 +49,7 @@ gpr.fit(xTrainScaled, yTrain)
 # Interpolation
 xMin = x.min(axis=0)
 xMax = x.max(axis=0)
-# GPR will not extrapolate
-# xMin = xMin - extrapolationRange * (xMax - xMin)
-# xMax = xMax + extrapolationRange * (xMax - xMin)
-totalAugmentedX = 1028
-# 1028 points total.
+totalAugmentedX = augmentedDataCount
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
@@ -63,10 +59,10 @@ xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-saveDirectory = os.path.join(directory, f"{model} Size_{setSize} Random_{randomState} Augmented Data.csv")
+saveDirectory = os.path.join(directory, f"{model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
 dfCSV.to_csv(saveDirectory, index= False, header=False)
 
-print(f"Saved {model} Size_{setSize} Random_{randomState} Augmented Data!")
+print(f"Saved {model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
 
 
 

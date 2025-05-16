@@ -14,9 +14,9 @@ from sklearn.metrics import mean_squared_error, explained_variance_score
 
 # Select dataset, output, and randomState from config
 setSize = 40
-data = os.path.join("Datasets" , config.data)
-yIndex = config.yIndex
-randomState = config.randomState
+data = os.path.join("Datasets" , config.p1Data)
+yIndex = config.p1YIndex
+randomState = config.p1RandomState
 model = "GPR"
 
 # Automating file creation

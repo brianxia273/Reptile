@@ -10,21 +10,22 @@ import os
 
 
 # Select from config
-nn = config.ftNN
-yIndex = config.ftYIndex
-data = os.path.join("Datasets" , config.ftData)
-nnEpoch = config.ftNNEpochs
-nnBatch = config.ftNNBatch
-epochs = config.ftEpochs
-batchSize = config.ftBatchSize
-setSize = config.ftNNSize
-learningRate = config.ftLearningRate
+nn = config.p4NN
+yIndex = config.p4YIndex
+data = os.path.join("Datasets" , config.p4Data)
+nnEpochs = config.p4NNEpochs
+nnBatch = config.p4NNBatch
+epochs = config.p4Epochs
+batchSize = config.p4BatchSize
+setSize = config.p4NNSize
+learningRate = config.p4LearningRate
+augmentedDataCount = config.p4N
 
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
-mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output, f"Meta-Trained {nn} - Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
+mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output, f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
 mlModel.compile(optimizer=Adam(learning_rate=learningRate), loss='mse')
 
@@ -47,6 +48,6 @@ print("Training Loss:", history.history['loss'])
 # Save Fine-Tuned NN
 directory = os.path.join("Fine-Tuned Neural Networks", nn, datasetModels, output)
 os.makedirs(directory, exist_ok=True)
-modelName = f"Fine-Tuned {nn} - Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
+modelName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
 mlModel.save(os.path.join(directory, modelName))
 print("Saved " + os.path.join(directory, modelName) + "!")
