@@ -32,7 +32,7 @@ output = "Film Thickness" if adYIndex == -2 else "NTi"
 datasetModels  = "Dataset 1 Models" if "Dataset 1" in adData else "Dataset 2 Models"
 
 # Load and normalize augmented data
-augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",f"Merged N_{augmentedDataCount} Size_{adSize} #{adNumber}  Augmented Data.csv")
+augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",f"Merged N_{augmentedDataCount} Size_{adSize} #{adNumber} Augmented Data.csv")
 augmentedData = pd.read_csv(augDataDirectory)
 x = augmentedData.iloc[:, :-1].values
 y = augmentedData.iloc[:, -1].values

@@ -62,7 +62,7 @@ dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
 saveDirectory = os.path.join(directory, f"{model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
 dfCSV.to_csv(saveDirectory, index= False, header=False)
 
-print(f"Saved {model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
+print(f"Finished {model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
 
 
 
