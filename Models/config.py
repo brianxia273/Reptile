@@ -53,32 +53,32 @@ p3N: int = 6400 # N {6400, 12800, 25600}
 # Phase 4: Neural Network FineTune Configuration
 
 p4LearningRate: float = 0.2 # {0.05, 0.2} - Is same as MetaLearn (?)
-p4Epochs: int = 200 # {5, 10, 100, 200} - Is same as MetaLearn
+p4Epochs: int = 1000 # {5, 10, 100, 200} - Is same as MetaLearn (?)
 p4YIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
 p4Data: str = "Nitride (Dataset 1) NTi.csv"
-p4BatchSize: int = 20 # {5, 20}
+p4BatchSize: int = 1028 # {16, 512, 1028} (?)
 
 # Choosing Meta-Trained NN using its parameters
 p4NN: str = "FCNN"
 p4NNSize: int = 40
-p4NNEpochs: int = 1000 # {20, 200, 1000}
+p4NNEpoch: int = 1000 # {20, 200, 1000}
 p4NNBatch: int = 1028 # {16, 512, 1028}
 p4N: int = 6400 # N {6400, 12800, 25600}
 
 # ================================================================================
 # ================================================================================
 
-# Neural Network TestAccuracy Configuration
-#
-# taData: str = "Nitride (Dataset 1) NTi.csv"
-# taYIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
-#
-# # Need to adjust epoch and batch
-# taNN: str = "FCNN"
-# taNNSize: int = 40
-# taNNEpochs: int = 1000 # {20, 200, 1000}
-# taNNBatch: int = 1028 # {16, 512, 1028}
+# Phase 5: Neural Network TestAccuracy Configuration
 
+p5Data: str = "Nitride (Dataset 1) NTi.csv"
+p5YIndex: int = -2 # (-2) = film-thickness, (-1) = N/Ti ratio
+
+# Choosing Fine-Tuned NN using its parameters
+p5NN: str = "FCNN"
+p5NNSize: int = 40
+p5N: int = 6400 # N {6400, 12800, 25600}
+p5NNEpoch: int = 1000 # {20, 200, 1000}
+p5NNBatch: int = 1028 # {16, 512, 1028}
 
 # ================================================================================
 # ================================================================================

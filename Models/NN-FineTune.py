@@ -13,7 +13,7 @@ import os
 nn = config.p4NN
 yIndex = config.p4YIndex
 data = os.path.join("Datasets" , config.p4Data)
-nnEpochs = config.p4NNEpochs
+nnEpochs = config.p4NNEpoch
 nnBatch = config.p4NNBatch
 epochs = config.p4Epochs
 batchSize = config.p4BatchSize
