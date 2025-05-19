@@ -1,5 +1,5 @@
 # **Neural Network Constructor for Reactive Sputtering Experiments**
-_ReadMe Last Updated: 5/16/25_
+_ReadMe Last Updated: 5/19/25_
 
 ## **Overview**
 This repository contains scripts and models for generating and training neural networks to assist with reactive sputtering experiments. This project aims to use machine learning techniques, specifically first-order meta-learning, to predict key outcomes in reactive sputtering processes and overcome the obstacle of limited data. For meta-learning, we leveraged Reptile, an algorithm developed by OpenAI, to train our neural networks to quickly adapt to new tasks by learning from simulated data from three linear regression models: Support Vector Regression (SVR), Bayesian Ridge Regression (BRR), and Gaussian Process Regression (GPR).
@@ -86,8 +86,8 @@ Example files and sub-directories are shown above.
 
 
 ## 2. Augmented Data Generation
-- `SVR-DataGenerate.py`
-- `SVR-InterExtraDataGenerate.py`
+- `SVR-DataGenerate-MetaTrain.py`
+- `SVR-DataGenerate-PreTrain.py`
   
 - `BRR-DataGenerate.py`
   
