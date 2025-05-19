@@ -107,6 +107,7 @@ Example files and sub-directories are shown above.
 
 ## 5. Fine-Tuning for Real-World Usage
 - `NN-FineTune.py`
+- `NN-TestAccuracy.py`
 
 ---
 ## **How to Use**
