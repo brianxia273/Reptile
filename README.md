@@ -102,7 +102,7 @@ Example files and sub-directories are shown above.
   
 
 ## 4. Meta-Training Neural Networks using Reptile Algorithm
-- `NN-MetaLearn.py`
+- `NN-MetaTrain.py`
 
 
 ## 5. Fine-Tuning for Real-World Usage
