@@ -98,7 +98,8 @@ Example files and sub-directories are shown above.
 
 ## 3. Defining and Pre-Training Neural Network Archetypes
 - `FCNN-Pretrain.py`
-
+- `1D-Conv-Pretrain.py`
+  
 
 ## 4. Meta-Training Neural Networks using Reptile Algorithm
 - `NN-MetaLearn.py`
