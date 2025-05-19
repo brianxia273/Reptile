@@ -93,7 +93,7 @@ Example files and sub-directories are shown above.
   
 - `GPR-DataGenerate.py`
   
-- `RegressionModels-DataMerger.py`
+- `AugmentedDataMerger.py`
 
 
 ## 3. Defining and Pre-Training Neural Network Archetypes
