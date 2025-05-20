@@ -1,15 +1,15 @@
 # Testing Fine-Tuned Neural Network Model's accuracy
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 import pandas as pd
 import config
 import os
 from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
 import matplotlib.pyplot as plt
+import joblib
 
 # Select from config
-data = os.path.join("Datasets" , config.p5Data)
+data = os.path.join("Datasets", config.p5Data)
 yIndex = config.p5YIndex
 nn = config.p5NN
 setSize = config.p5NNSize
@@ -17,22 +17,25 @@ nnEpoch = config.p5NNEpoch
 nnBatch = config.p5NNBatch
 augmentedDataCount = config.p5N
 
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
-mlModelPath = os.path.join("Fine-Tuned Neural Networks", nn, datasetModels, output, f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
+
+mlModelPath = os.path.join("Fine-Tuned Neural Networks", nn, datasetModels, output,
+                           f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
 
 # Import Real Data CSV file
 df = pd.read_csv(data)
 x = df.iloc[:, :-2].values
-y = df.iloc[:, yIndex].values   # Selecting output
+y = df.iloc[:, yIndex].values  # Selecting output
 
 # Normalize data
-dataScaler = MinMaxScaler(feature_range=(-1, 1))
+scalerName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
+dataScaler = joblib.load(os.path.join("Data Scalers", nn, datasetModels, output, scalerName))
 xLog = np.log1p(x)
-xScaled = dataScaler.fit_transform(xLog)
+xScaled = dataScaler.transform(xLog)
 
 # Check predictions
 yPredict = mlModel.predict(xScaled)

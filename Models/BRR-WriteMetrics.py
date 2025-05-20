@@ -11,18 +11,18 @@ from sklearn.metrics import mean_squared_error, explained_variance_score
 
 # Select dataset, output, and randomState from config
 setSize = 40
-data = os.path.join("Datasets" , config.p1Data)
+data = os.path.join("Datasets", config.p1Data)
 yIndex = config.p1YIndex
 randomState = config.p1RandomState
 model = "BRR"
 
 # Automating file creation
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 directory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model)
 os.makedirs(directory, exist_ok=True)
-with open(os.path.join(directory ,f"{model} Random_{randomState} Metric Iteration Evaluation.txt"), "w") as f:
+with open(os.path.join(directory, f"{model} Random_{randomState} Metric Iteration Evaluation.txt"), "w") as f:
     # Write headers
     f.write("MSE, RMSE, MAPE, EV, and R^2 Metrics\n")
     f.write(f"Current Model Dataset: {data}\n")
@@ -76,5 +76,3 @@ with open(os.path.join(directory ,f"{model} Random_{randomState} Metric Iteratio
         # print("Saved!")
 
         setSize -= 5
-
-

@@ -1,4 +1,5 @@
 # Making correlogram of input and output variables
+# Use to check if CSV datasets are correctly copied over
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -16,10 +17,10 @@ plt.title('Correlogram of Variables')
 plt.show()
 
 # AVAILABLE DATASETS:
-    # FullData.csv
-    # Metal (Alone).csv
-    # Metal (Alone) NTi.csv
-    # Nitride (Dataset 1).csv
-        # Nitride (Dataset 1) NTi.csv
-    # NitrideMetal (Dataset 2).csv
-        # NitrideMetal (Dataset 2) NTi.csv
+# FullData.csv
+# Metal (Alone).csv
+# Metal (Alone) NTi.csv
+# Nitride (Dataset 1).csv
+# Nitride (Dataset 1) NTi.csv
+# NitrideMetal (Dataset 2).csv
+# NitrideMetal (Dataset 2) NTi.csv

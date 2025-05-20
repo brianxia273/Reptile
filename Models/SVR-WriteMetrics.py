@@ -13,13 +13,13 @@ from sklearn.metrics import mean_squared_error, explained_variance_score
 
 # Select dataset, output, and randomState from config
 setSize = 40
-data = os.path.join("Datasets" , config.p1Data)
+data = os.path.join("Datasets", config.p1Data)
 yIndex = config.p1YIndex
 randomState = config.p1RandomState
 model = "SVR"
 
 # Automating file creation
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 directory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model)
@@ -34,7 +34,7 @@ with open(os.path.join(directory, f"{model} Random_{randomState} Metric Iteratio
     while setSize != 0:
         df = pd.read_csv(data)
         x = df.iloc[:, :-2].values
-        y = df.iloc[:, yIndex].values   # Selecting output
+        y = df.iloc[:, yIndex].values  # Selecting output
 
         # 80% data to train, 20% leave for testing. random_state is set in config
         trainSize = min(setSize, int(0.8 * len(x)), len(x))
@@ -48,7 +48,7 @@ with open(os.path.join(directory, f"{model} Random_{randomState} Metric Iteratio
         xTestScaled = dataScaler.transform(xTestLog)
 
         # Init SVR model
-        svr = SVR(kernel='rbf', C=5000.0, epsilon= 0.5, gamma=1) # ADJUST HYPERPARAMETERS
+        svr = SVR(kernel='rbf', C=5000.0, epsilon=0.5, gamma=1)  # ADJUST HYPERPARAMETERS
         svr.fit(xTrainScaled, yTrain)
 
         # Initial predictions
@@ -77,6 +77,3 @@ with open(os.path.join(directory, f"{model} Random_{randomState} Metric Iteratio
         # print("Saved!")
 
         setSize -= 5
-
-
-

@@ -9,6 +9,7 @@ import config
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+import joblib
 
 # Select size, dataset, output, and randomState from config
 setSize = config.p1Size
@@ -20,7 +21,7 @@ extrapolationRange = config.p1SvrExtrapolationRange
 augmentedDataCount = config.p1N
 
 # Automating file creation
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 directory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model)
@@ -41,8 +42,8 @@ dataScaler = MinMaxScaler(feature_range=(-1, 1))
 xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
-# Init SVR model
-svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale') # ADJUST HYPERPARAMETERS HERE
+# Init SVR model, ADJUST HYPERPARAMETERS HERE
+svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale')
 svr.fit(xTrainScaled, yTrain)
 
 # Interpolation and Extrapolation
@@ -51,6 +52,7 @@ xMax = x.max(axis=0)
 xMin = xMin - extrapolationRange * (xMax - xMin)
 xMax = xMax + extrapolationRange * (xMax - xMin)
 totalAugmentedX = augmentedDataCount
+
 # Scaling Data
 xAugmented = np.random.uniform(xMin, xMax, size=(totalAugmentedX, x.shape[1]))
 xAugmentedLog = np.log1p(xAugmented)
@@ -59,11 +61,10 @@ yAugmented = svr.predict(xAugmentedScaled)
 xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
+# Saving Augmented Data
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-saveDirectory = os.path.join(directory, f"{model} PreTrain N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
-dfCSV.to_csv(saveDirectory, index= False, header=False)
+dataSaveDirectory = os.path.join(directory,
+                                 f"{model} PreTrain N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
+dfCSV.to_csv(dataSaveDirectory, index=False, header=False)
 
 print(f"Finished {model} PreTrain N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
-
-
-

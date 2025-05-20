@@ -8,12 +8,12 @@ import config
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error,  explained_variance_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
 import os
 
 # Select size, dataset, output, and randomState from config
 setSize = config.p1Size
-data = os.path.join("Datasets" , config.p1Data)
+data = os.path.join("Datasets", config.p1Data)
 yIndex = config.p1YIndex
 randomState = config.p1RandomState
 
@@ -38,7 +38,7 @@ xTestScaled = dataScaler.transform(xTestLog)
 paramGrid = {
     'C': [0.01, 0.1, 1, 10, 100, 1000, 2000, 5000, 5010],
     'kernel': ['linear', 'rbf'],
-    'gamma': ['scale', 'auto',  0.01, 0.1, 1, 10, 100,],
+    'gamma': ['scale', 'auto', 0.01, 0.1, 1, 10, 100, ],
     'epsilon': [0.00009, 0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.5]
 }
 gridSearch = GridSearchCV(SVR(), paramGrid, cv=5, scoring='r2', n_jobs=-1)
@@ -58,8 +58,8 @@ mapeCurrent = np.mean(np.abs((yTest - yPredict) / yTest))
 evCurrent = explained_variance_score(yTest, yPredict)
 currentModelScore = bestSVR.score(xTestScaled, yTest)
 print("Current Model Dataset:", data)
-print("Current Model Training Size:",setSize)
-print("Random State:",randomState)
+print("Current Model Training Size:", setSize)
+print("Random State:", randomState)
 print("Current Model MSE:", mseCurrent)
 print("Current Model RMSE:", rmseCurrent)
 print("Current Model MAPE:", mapeCurrent)

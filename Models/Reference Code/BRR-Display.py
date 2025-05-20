@@ -9,7 +9,7 @@ import joblib
 from sklearn.linear_model import BayesianRidge
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error,  explained_variance_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
 
 # Select size, dataset, output, and randomState from config
 setSize = config.size
@@ -20,11 +20,12 @@ model = config.displayModel
 displayModelNum = config.displayModelNum
 
 # Automating file selection
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Load BRR model
-brr = joblib.load(f"Saved Models/Starter Models/{datasetModels}/{output}/{model}/{model.lower()}_model_{displayModelNum}.pkl")
+brr = joblib.load(
+    f"Saved Models/Starter Models/{datasetModels}/{output}/{model}/{model.lower()}_model_{displayModelNum}.pkl")
 
 # Selecting dataset
 df = pd.read_csv(data)
