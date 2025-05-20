@@ -10,14 +10,14 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Select size, dataset, output, and randomState from config
 setSize = config.p1Size
-data = os.path.join("Datasets" , config.p1Data)
+data = os.path.join("Datasets", config.p1Data)
 yIndex = config.p1YIndex
 randomState = config.p1RandomState
 model = "BRR"
 augmentedDataCount = config.p1N
 
 # Automating file creation
-datasetModels  = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
+datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 directory = os.path.join("Regression Model Data and Metrics", datasetModels, output, model)
@@ -54,10 +54,8 @@ xColumns = np.array(xAugmented)
 yColumn = np.array(yAugmented)
 
 dfCSV = pd.DataFrame(np.column_stack((xColumns, yColumn)))
-saveDirectory = os.path.join(directory, f"{model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
-dfCSV.to_csv(saveDirectory, index= False, header=False)
+saveDirectory = os.path.join(directory,
+                             f"{model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data.csv")
+dfCSV.to_csv(saveDirectory, index=False, header=False)
 
 print(f"Finished {model} N_{augmentedDataCount} Size_{setSize} Random_{randomState} Augmented Data!")
-
-
-

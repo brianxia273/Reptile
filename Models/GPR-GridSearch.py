@@ -9,13 +9,12 @@ import config
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error,  explained_variance_score
+from sklearn.metrics import mean_squared_error, explained_variance_score
 import os
-
 
 # Select size, dataset, output, and randomState from config
 setSize = config.p1Size
-data = os.path.join("Datasets" , config.p1Data)
+data = os.path.join("Datasets", config.p1Data)
 yIndex = config.p1YIndex
 randomState = config.p1RandomState
 
@@ -38,21 +37,21 @@ xTestScaled = dataScaler.transform(xTestLog)
 
 # GridSearchCV finding optimal hyperparameters, with cross-validation
 param_grid = {
-            "kernel": [
-                ConstantKernel(1.0) * Matern(length_scale=50, nu=1.5),
-                # Matern kernel with length_scale=50, nu=1.5 (previously successful)
-                ConstantKernel(1.0) * Matern(length_scale=75, nu=1.5),
-                ConstantKernel(1.0) * Matern(length_scale=60, nu=1.5),
-                ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5),
-                ConstantKernel(1.0) * Matern(length_scale=55, nu=3.0),
-                ConstantKernel(1.0) * Matern(length_scale=50, nu=0.5),
-                ConstantKernel(1.0) * Matern(length_scale=50, nu=2.5),
-            ],
-            "alpha": [1e-4, 1e-2, 1e-3],
-            "n_restarts_optimizer": [5, 10, 20],
-            "normalize_y": [True],
-            "optimizer": ["fmin_l_bfgs_b"],
-        }
+    "kernel": [
+        ConstantKernel(1.0) * Matern(length_scale=50, nu=1.5),
+        # Matern kernel with length_scale=50, nu=1.5 (previously successful)
+        ConstantKernel(1.0) * Matern(length_scale=75, nu=1.5),
+        ConstantKernel(1.0) * Matern(length_scale=60, nu=1.5),
+        ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5),
+        ConstantKernel(1.0) * Matern(length_scale=55, nu=3.0),
+        ConstantKernel(1.0) * Matern(length_scale=50, nu=0.5),
+        ConstantKernel(1.0) * Matern(length_scale=50, nu=2.5),
+    ],
+    "alpha": [1e-4, 1e-2, 1e-3],
+    "n_restarts_optimizer": [5, 10, 20],
+    "normalize_y": [True],
+    "optimizer": ["fmin_l_bfgs_b"],
+}
 gridSearch = GridSearchCV(GaussianProcessRegressor(), param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
 gridSearch.fit(xTrainScaled, yTrain)
 print("Best GPR Parameters:", gridSearch.best_params_)
@@ -70,8 +69,8 @@ mapeCurrent = np.mean(np.abs((yTest - yPredict) / yTest))
 evCurrent = explained_variance_score(yTest, yPredict)
 currentModelScore = bestGPR.score(xTestScaled, yTest)
 print("Current Model Dataset:", data)
-print("Current Model Training Size:",setSize)
-print("Random State:",randomState)
+print("Current Model Training Size:", setSize)
+print("Random State:", randomState)
 print("Current Model MSE:", mseCurrent)
 print("Current Model RMSE:", rmseCurrent)
 print("Current Model MAPE:", mapeCurrent)

@@ -1,14 +1,12 @@
-# Pre-training Fully Connected Neural Network Model using SVG InterExtra augmented data
+# Pre-training 1-dimensional convolution neura network using SVG InterExtra augmented data
 # Pre-trained on SVR interpolated and extrapolated data
 
 import numpy as np
-from keras.src.layers import BatchNormalization, Dropout
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation
+from tensorflow.keras.layers import Dense, Conv1D, BatchNormalization, Flatten, Dropout
+from tensorflow.keras.regularizers import l1_l2
 from tensorflow.keras.optimizers import Adam
-from keras.initializers import RandomNormal
-from keras.regularizers import l1_l2
 import pandas as pd
 import config
 import os
@@ -28,23 +26,26 @@ augmentedDataCount = config.p2N
 def constructModelLayers():
     model = Sequential()
 
-    # 8 input nodes, into Hidden Layer 1
-    model.add(Dense(4, input_dim=8, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    # Layer 1
+    model.add(Conv1D(filters=2, kernel_size=3, padding='same',
+                     activation='relu',
+                     kernel_initializer='random_normal',
+                     kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2),
+                     input_shape=(8, 1)))
     model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
 
-    # Hidden Layer 2
-    model.add(Dense(4, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    # Layer 2
+    model.add(Conv1D(filters=1, kernel_size=3, padding='same',
+                     activation='relu',
+                     kernel_initializer='random_normal',
+                     kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
     model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
 
-    # Output Layer
-    model.add(Dense(1, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
-    model.add(BatchNormalization())
-    model.add(Activation('linear'))
-
+    # Flattening output
+    model.add(Flatten())
+    model.add(Dense(1, activation='linear',
+                    kernel_initializer='random_normal',
+                    kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
     model.compile(optimizer=Adam(learning_rate=learningRate), loss='mean_squared_error')
     return model
 
@@ -64,18 +65,18 @@ dataScaler = MinMaxScaler(feature_range=(-1, 1))
 xLog = np.log1p(x)
 xScaled = dataScaler.fit_transform(xLog)
 
-# Construct FCNN Model
-fcnnModel = constructModelLayers()
+# Construct 1D-Conv Model
+convModel = constructModelLayers()
 
-# Pre-train FCNN
-history = fcnnModel.fit(xScaled, y, epochs=epochs, batch_size=batchSize, verbose=1)
+# Pre-train 1D-Conv
+history = convModel.fit(xScaled, y, epochs=epochs, batch_size=batchSize, verbose=1)
 
 # Print history
 # print("Training Loss:", history.history['loss'])
 
-# Save FCNN
-directory = os.path.join("Pre-Trained Neural Networks", "FCNN", datasetModels, output)
+# Save 1D-Conv
+directory = os.path.join("Pre-Trained Neural Networks", "1D-Conv", datasetModels, output)
 os.makedirs(directory, exist_ok=True)
-modelName = f"Pre-Trained FCNN - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
-fcnnModel.save(os.path.join(directory, modelName))
+modelName = f"Pre-Trained 1D-Conv - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
+convModel.save(os.path.join(directory, modelName))
 print("Saved " + os.path.join(directory, modelName) + "!")

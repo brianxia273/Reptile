@@ -9,8 +9,7 @@ import os
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error,  explained_variance_score
-
+from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
 
 # Selecting dataset
 data = "Datasets/NitrideMetal (Dataset 2 Models) NTi.csv"
@@ -27,7 +26,6 @@ setSize = 40
 trainSize = min(setSize, int(0.8 * len(x)), len(x))
 xTrain, xTest, yTrain, yTest = train_test_split(x, y, train_size=trainSize, random_state=40)
 
-
 # Scaling data
 xTrainLog = np.log1p(xTrain)
 xTestLog = np.log1p(xTest)
@@ -43,7 +41,7 @@ svr.fit(xTrainScaled, yTrain)
 paramGrid = {
     'C': [0.01, 0.1, 1, 10, 100, 1000, 2000, 5000, 5010],
     'kernel': ['linear', 'rbf'],
-    'gamma': ['scale', 'auto',  0.01, 0.1, 1, 10, 100,],
+    'gamma': ['scale', 'auto', 0.01, 0.1, 1, 10, 100, ],
     'epsilon': [0.00009, 0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.5]
 }
 gridSearch = GridSearchCV(svr, paramGrid, cv=5, scoring='r2', n_jobs=-1)
@@ -61,13 +59,12 @@ mapeCurrent = np.mean(np.abs((yTest - yPredict) / yTest))
 evCurrent = explained_variance_score(yTest, yPredict)
 currentModelScore = svr.score(xTestScaled, yTest)
 print("Current Model Dataset:", data)
-print("Current Model Training Size:",setSize)
+print("Current Model Training Size:", setSize)
 print("Current Model MSE:", mseCurrent)
 print("Current Model RMSE:", rmseCurrent)
 print("Current Model MAPE:", mapeCurrent)
 print("Current Model EV:", evCurrent)
 print("Current Model R^2:", currentModelScore)
-
 
 # Plotting data
 plt.figure(figsize=(8, 8))
