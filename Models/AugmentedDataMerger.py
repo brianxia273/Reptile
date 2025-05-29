@@ -16,7 +16,7 @@ gprDataRS: int = 44
 setSize: int = 40
 data: str = "Nitride (Dataset 1) NTi.csv"
 yIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
-augmentedDataCount: int = 6400  # N {6400, 12800, 25600}
+augmentedDataCount: int = 25600  # N {6400, 12800, 25600}
 
 # AVAILABLE DATASETS:
 # FullData.csv
@@ -38,11 +38,18 @@ brrDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, 
                             f"BRR N_{augmentedDataCount} Size_{setSize} Random_{brrDataRS} Augmented Data.csv")
 gprDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "GPR",
                             f"GPR N_{augmentedDataCount} Size_{setSize} Random_{gprDataRS} Augmented Data.csv")
+realDirectory = data
 
-dataframes = [pd.read_csv(svrDirectory, header=None), pd.read_csv(brrDirectory, header=None),
-              pd.read_csv(gprDirectory, header=None)]
-mergedDF = pd.concat(dataframes, axis=0, ignore_index=True)
+realDF = pd.read_csv(realDirectory, header=None, skiprows=1)
+removeCol = -1 if yIndex == -2 else -2
+realDF = realDF.drop(realDF.columns[removeCol], axis=1)
+df = [pd.read_csv(svrDirectory, header=None), pd.read_csv(brrDirectory, header=None),
+              pd.read_csv(gprDirectory, header=None), realDF ]
+
+mergedDF = pd.concat(df, axis=0, ignore_index=True)
+mergedDF = mergedDF.dropna(axis=1, how='any')
 mixedMergedDF = mergedDF.sample(frac=1, random_state=45).reset_index(drop=True)
+
 
 mergedDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged")
 os.makedirs(mergedDirectory, exist_ok=True)

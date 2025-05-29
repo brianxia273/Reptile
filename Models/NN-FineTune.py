@@ -25,7 +25,7 @@ output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
 mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output,
-                           f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch}.keras")
+                           f"(1)Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
 mlModel.compile(optimizer=Adam(learning_rate=learningRate), loss='mse')
 
@@ -36,13 +36,20 @@ y = df.iloc[:, yIndex].values  # Selecting output
 
 # Normalize data
 mlScalerPath = os.path.join("Data Scalers", nn, datasetModels, output,
-                            f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch} DataScaler.pkl")
+                            f"(1)Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch} DataScaler.pkl")
 dataScaler = joblib.load(mlScalerPath)
 xLog = np.log1p(x)
 xScaled = dataScaler.transform(xLog)
 
+# Save Data Scaler
+scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
+os.makedirs(scalerDirectory, exist_ok=True)
+scalerName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize} DataScaler.pkl"
+joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
+print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
+
 # Fine-Tune NN
-history = mlModel.fit(xScaled, y, epochs=epochs, batch_size=batchSize, verbose=1)  # Add learning rate
+history = mlModel.fit(xScaled, y, epochs=epochs, batch_size=batchSize, verbose=1)
 
 # Print history
 print("Training Loss:", history.history['loss'])
@@ -53,10 +60,3 @@ os.makedirs(directory, exist_ok=True)
 modelName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize}.keras"
 mlModel.save(os.path.join(directory, modelName))
 print("Saved " + os.path.join(directory, modelName) + "!")
-
-# Save Data Scaler
-scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
-os.makedirs(scalerDirectory, exist_ok=True)
-scalerName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{epochs} Batch_{batchSize} DataScaler.pkl"
-joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
-print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")

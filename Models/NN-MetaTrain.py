@@ -44,6 +44,13 @@ dataScaler = MinMaxScaler(feature_range=(-1, 1))
 xLog = np.log1p(x)
 xScaled = dataScaler.fit_transform(xLog)
 
+# Saving Data Scaler
+scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
+os.makedirs(scalerDirectory, exist_ok=True)
+scalerName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
+joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
+print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
+
 # Load pre-trained neural network, set optimizer
 nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, output,
                            f"Pre-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
@@ -85,13 +92,6 @@ os.makedirs(modelDirectory, exist_ok=True)
 trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 nnModel.save(os.path.join(modelDirectory, trainedModelName))
 print("Saved " + os.path.join(modelDirectory, trainedModelName) + "!")
-
-# Saving Data Scaler
-scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
-os.makedirs(scalerDirectory, exist_ok=True)
-scalerName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
-joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
-print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
 
 # Visualize results - to be added
 
