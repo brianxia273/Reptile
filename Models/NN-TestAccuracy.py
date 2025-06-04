@@ -5,6 +5,7 @@ import pandas as pd
 import config
 import os
 from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import joblib
 
@@ -16,12 +17,12 @@ setSize = config.p5NNSize
 nnEpoch = config.p5NNEpoch
 nnBatch = config.p5NNBatch
 augmentedDataCount = config.p5N
+randomState = config.p5RandomState
 
 datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
-
 mlModelPath = os.path.join("Fine-Tuned Neural Networks", nn, datasetModels, output,
                            f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
@@ -31,19 +32,23 @@ df = pd.read_csv(data)
 x = df.iloc[:, :-2].values
 y = df.iloc[:, yIndex].values  # Selecting output
 
-# Normalize data
+# Train/Test split, use Test for evaluation
+trainSize = min(setSize, int(0.8 * len(x)), len(x))
+xTrain, xTest, yTrain, yTest = train_test_split(x, y, train_size=trainSize, random_state=randomState)
+
+# Normalize data, ignore Train
 scalerName = f"Fine-Tuned {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
 dataScaler = joblib.load(os.path.join("Data Scalers", nn, datasetModels, output, scalerName))
-xLog = np.log1p(x)
-xScaled = dataScaler.transform(xLog)
+xTestLog= np.log1p(xTest)
+xTestScaled = dataScaler.transform(xTestLog)
 
 # Check predictions
-yPredict = mlModel.predict(xScaled)
-mse = mean_squared_error(y, yPredict)
+yPredict = mlModel.predict(xTestScaled)
+mse = mean_squared_error(yTest, yPredict)
 rmse = np.sqrt(mse)
-mape = np.mean(np.abs((y - yPredict) / y))
-ev = explained_variance_score(y, yPredict)
-r2 = r2_score(y, yPredict)
+mape = np.mean(np.abs((yTest - yPredict) / yTest))
+ev = explained_variance_score(yTest, yPredict)
+r2 = r2_score(yTest, yPredict)
 
 # Print accuracy
 print(f"{mlModelPath} Model Evaluation Metrics: ")
@@ -54,8 +59,8 @@ print(f"EV: {ev}\n")
 print(f"R^2: {r2}\n")
 
 plt.figure(figsize=(8, 6))
-plt.scatter(y, yPredict, alpha=0.6, edgecolor='k')
-plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)  # ideal line
+plt.scatter(yTest, yPredict, alpha=0.6, edgecolor='k')
+plt.plot([yTest.min(), yTest.max()], [yTest.min(), yTest.max()], 'r--', lw=2)  # ideal line
 plt.xlabel("Actual Values")
 plt.ylabel("Predicted Values")
 plt.title("Actual vs Predicted Values")

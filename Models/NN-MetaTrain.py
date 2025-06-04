@@ -9,7 +9,6 @@ from tensorflow.keras.losses import MeanSquaredError
 import pandas as pd
 import config
 import os
-import joblib
 
 # Select hyperparameters from config
 innerStepSize = config.p3InnerStepSize
@@ -26,30 +25,44 @@ nn = config.p3NN
 adSize = config.p3Size
 adData = os.path.join("Datasets", config.p3Data)
 adYIndex = config.p3YIndex
-adNumber = config.p3Number
 augmentedDataCount = config.p3N
+randomState = config.p3RandomState
+
+seed = config.p3seed
+np.random.seed(seed)
+tf.random.set_seed(seed)
 
 output = "Film Thickness" if adYIndex == -2 else "NTi"
 datasetModels = "Dataset 1 Models" if "Dataset 1" in adData else "Dataset 2 Models"
 
-# Load and normalize augmented data
-augDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "Merged",
-                                f"Merged N_{augmentedDataCount} Size_{adSize} #{adNumber} Augmented Data.csv")
-augmentedData = pd.read_csv(augDataDirectory)
-x = augmentedData.iloc[:, :-1].values
-y = augmentedData.iloc[:, -1].values
+# Load and normalize 3 augmented datasets
 
-# Normalize data
-dataScaler = MinMaxScaler(feature_range=(-1, 1))
-xLog = np.log1p(x)
-xScaled = dataScaler.fit_transform(xLog)
+# SVR
+svrDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "SVR", f"SVR MetaTrain N_{augmentedDataCount} Size_{adSize} Random_{randomState} Augmented Data.csv")
+svrAugData = pd.read_csv(svrDataDirectory)
+svrX = svrAugData.iloc[:, :-1].values
+svrY = svrAugData.iloc[:, -1].values # Always 1 output col in aug data
+svrDataScaler = MinMaxScaler(feature_range=(-1, 1))
+svrXLog = np.log1p(svrX)
+svrXScaled = svrDataScaler.fit_transform(svrXLog)
 
-# Saving Data Scaler
-scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
-os.makedirs(scalerDirectory, exist_ok=True)
-scalerName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
-joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
-print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
+# BRR
+brrDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "BRR", f"BRR N_{augmentedDataCount} Size_{adSize} Random_{randomState} Augmented Data.csv")
+brrAugData = pd.read_csv(brrDataDirectory)
+brrX = brrAugData.iloc[:, :-1].values
+brrY = brrAugData.iloc[:, -1].values
+brrDataScaler = MinMaxScaler(feature_range=(-1, 1))
+brrXLog = np.log1p(brrX)
+brrXScaled = brrDataScaler.fit_transform(brrXLog)
+
+# GPR
+gprDataDirectory = os.path.join("Regression Model Data and Metrics", datasetModels, output, "GPR", f"GPR N_{augmentedDataCount} Size_{adSize} Random_{randomState} Augmented Data.csv")
+gprAugData = pd.read_csv(gprDataDirectory)
+gprX = gprAugData.iloc[:, :-1].values
+gprY = gprAugData.iloc[:, -1].values
+gprDataScaler = MinMaxScaler(feature_range=(-1, 1))
+gprXLog = np.log1p(gprX)
+gprXScaled = gprDataScaler.fit_transform(gprXLog)
 
 # Load pre-trained neural network, set optimizer
 nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, output,
@@ -61,17 +74,21 @@ optimizer = Adam(learning_rate=innerStepSize)
 for metaIter in range(metaTasks):
     # Save temporary weights
     oldWeights = nnModel.get_weights()
+    # Choose SVR, BRR, or GPR
+    datasetChoice = np.random.randint(0, 3)
+    xScaled = svrXScaled if datasetChoice == 0 else brrXScaled if datasetChoice == 1 else gprXScaled
+    y = svrY if datasetChoice == 0 else brrY if datasetChoice == 1 else gprY
     # Get mini batch
     miniBatchIndices = np.random.choice(len(xScaled), metaBatchSize, replace=False)
     xBatchScaled = xScaled[miniBatchIndices]
     yBatch = y[miniBatchIndices]
-    # Inner Loop Training (x does not get used)
-    for x in range(metaEpochs):
+    mse = MeanSquaredError()
+    # Inner Loop Training
+    for _ in range(metaEpochs):
         # Record MSE computations, to later compute gradients/derivatives
         with tf.GradientTape() as tape:
             # Calculate LMSE of predicted and actual output
             predictions = nnModel(xBatchScaled)
-            mse = MeanSquaredError()
             lmseLoss = mse(yBatch, predictions)
         # Compute gradients/derivatives of MSE equation, tells us direction/magnitude to minimize loss. Multiply by loss function, add onto weight
         gradients = tape.gradient(lmseLoss, nnModel.trainable_weights)
@@ -96,9 +113,16 @@ print("Saved " + os.path.join(modelDirectory, trainedModelName) + "!")
 # Visualize results - to be added
 
 # ================================================================================
-# Extra code to be considered
+# Extra reference code
 # ================================================================================
 
 # Auto-adjusting outer learning rate/step size that makes sure updates start big and get smaller over time
 # fractionDone = metaIter / metaTasks
 #     currentMetaStepSize = (1 - fractionDone) * metaStepSize
+
+# # Saving Data Scaler
+# scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
+# os.makedirs(scalerDirectory, exist_ok=True)
+# scalerName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch} DataScaler.pkl"
+# joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
+# print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")

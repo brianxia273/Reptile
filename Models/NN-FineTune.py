@@ -3,10 +3,13 @@
 import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.optimizers import Adam
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 import pandas as pd
 import config
 import os
 import joblib
+
 
 # Select from config
 nn = config.p4NN
@@ -19,6 +22,7 @@ batchSize = config.p4BatchSize
 setSize = config.p4NNSize
 learningRate = config.p4LearningRate
 augmentedDataCount = config.p4N
+randomState = config.p4RandomState
 
 datasetModels = "Dataset 1 Models" if "Dataset 1" in data else "Dataset 2 Models"
 output = "Film Thickness" if yIndex == -2 else "NTi"
@@ -34,12 +38,16 @@ df = pd.read_csv(data)
 x = df.iloc[:, :-2].values
 y = df.iloc[:, yIndex].values  # Selecting output
 
+# Train/Test split
+trainSize = min(setSize, int(0.8 * len(x)), len(x))
+xTrain, xTest, yTrain, yTest = train_test_split(x, y, train_size=trainSize, random_state=randomState)
+
 # Normalize data
-mlScalerPath = os.path.join("Data Scalers", nn, datasetModels, output,
-                            f"(1)Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch} DataScaler.pkl")
-dataScaler = joblib.load(mlScalerPath)
-xLog = np.log1p(x)
-xScaled = dataScaler.transform(xLog)
+dataScaler = MinMaxScaler(feature_range=(-1, 1))
+xTrainLog = np.log1p(xTrain)
+xTrainScaled = dataScaler.fit_transform(xTrainLog)
+xTestLog = np.log1p(xTest)
+xTestScaled = dataScaler.transform(xTestLog)
 
 # Save Data Scaler
 scalerDirectory = os.path.join("Data Scalers", nn, datasetModels, output)
@@ -49,7 +57,7 @@ joblib.dump(dataScaler, os.path.join(scalerDirectory, scalerName))
 print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
 
 # Fine-Tune NN
-history = mlModel.fit(xScaled, y, epochs=epochs, batch_size=batchSize, verbose=1)
+history = mlModel.fit(xTrainScaled, yTrain, epochs=epochs, batch_size=batchSize, verbose=1, validation_data=(xTestScaled, yTest))
 
 # Print history
 print("Training Loss:", history.history['loss'])
