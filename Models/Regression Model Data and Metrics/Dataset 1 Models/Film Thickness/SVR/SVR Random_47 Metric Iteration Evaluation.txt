@@ -1,5 +1,5 @@
 MSE, RMSE, MAPE, EV, and R^2 Metrics
-Current Model Dataset: Datasets/Nitride (Dataset 1) NTi.csv
+Current Model Dataset: Datasets\Nitride (Dataset 1) NTi.csv
 Output Variable: Film Thickness
 Random State: 47
 ==================================================

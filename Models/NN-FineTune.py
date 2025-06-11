@@ -29,7 +29,7 @@ output = "Film Thickness" if yIndex == -2 else "NTi"
 
 # Import NN
 mlModelPath = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output,
-                           f"(1)Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch}.keras")
+                           f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{setSize} Epoch_{nnEpochs} Batch_{nnBatch}.keras")
 mlModel = load_model(mlModelPath)
 mlModel.compile(optimizer=Adam(learning_rate=learningRate), loss='mse')
 
