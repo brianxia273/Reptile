@@ -40,7 +40,7 @@ xTrainScaled = dataScaler.fit_transform(xTrainLog)
 xTestScaled = dataScaler.transform(xTestLog)
 
 # Init SVR model
-svr = SVR(kernel='rbf', C=5000.0, epsilon=9e-05, gamma='scale')  # ADJUST HYPERPARAMETERS HERE
+svr = SVR(kernel='rbf', C=5000.0, epsilon=0.5, gamma=1)  # ADJUST HYPERPARAMETERS HERE
 svr.fit(xTrainScaled, yTrain)
 
 # Interpolation

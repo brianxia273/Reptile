@@ -44,7 +44,7 @@ xTestScaled = dataScaler.transform(xTestLog)
 # Init GPR model
 gprKernel = ConstantKernel(1.0) * Matern(length_scale=40, nu=1.5)
 gpr = GaussianProcessRegressor(alpha=0.01, kernel=gprKernel, n_restarts_optimizer=10, normalize_y=True,
-                               optimizer="fmin_l_bfgs_b")
+                              optimizer="fmin_l_bfgs_b")
 gpr.fit(xTrainScaled, yTrain)
 
 # Interpolation
