@@ -8,7 +8,7 @@
 p1Size: int = 35
 p1Data: str = "Nitride (Dataset 1) NTi.csv"
 p1RandomState: int = 47
-p1YIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
+p1YIndex: int = -1  # (-2) = film-thickness, (-1) = N/Ti ratio
 
 p1SvrExtrapolationRange: float = 0.03
 p1N: int = 25600  # N = Augmented Data Count, {6400, 12800, 25600}
@@ -38,7 +38,7 @@ p3InnerStepSize: float = 0.05  # NEED TO DOUBLE-CHECK
 
 # Choosing Pre-Trained NN using its parameters
 p3NN: str = "FCNN" # 1D-Conv or FCNN
-p3NNSize = p3Size = 35
+p3NNSize = p3Size = 40
 p3NNEpoch: int = 1000  # {20, 200, 1000}
 p3NNBatch: int = 1028  # {16, 512, 1028}
 

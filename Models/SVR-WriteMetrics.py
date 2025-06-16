@@ -48,7 +48,7 @@ with open(os.path.join(directory, f"{model} Random_{randomState} Metric Iteratio
         xTestScaled = dataScaler.transform(xTestLog)
 
         # Init SVR model
-        svr = SVR(kernel='rbf', C=5000.0, epsilon=0.5, gamma=1)  # ADJUST HYPERPARAMETERS
+        svr = SVR(kernel='linear', C=.1, epsilon=0.05, gamma='scale')  # ADJUST HYPERPARAMETERS
         svr.fit(xTrainScaled, yTrain)
 
         # Initial predictions
