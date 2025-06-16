@@ -35,7 +35,7 @@ def constructModelLayers():
     model.add(Dropout(0.1))
 
     # Hidden Layer 2
-    model.add(Dense(4, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
+    model.add(Dense(2, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
