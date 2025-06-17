@@ -5,7 +5,7 @@
 
 # Phase 1: WriteMetrics, DataGenerate, and GridSearch Configuration
 # NOTE: NEED TO SELF-MODIFY HYPERPARAMETERS FOR GPR AND SVR IN WriteMetrics AND DataGenerate
-p1Size: int = 25
+p1Size: int = 15
 p1Data: str = "Nitride (Dataset 1) NTi.csv"
 p1RandomState: int = 47
 p1YIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
@@ -17,7 +17,7 @@ p1N: int = 25600  # N = Augmented Data Count, {6400, 12800, 25600}
 # ================================================================================
 
 # Phase 2: FCNN/1D-Conv PreTrain Configuration
-p2Size: int = 25
+p2Size: int = 15
 p2Data: str = "Nitride (Dataset 1) NTi.csv"
 p2RandomState: int = 47  # Selecting randomState of SVG augmented data
 p2YIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
@@ -37,8 +37,8 @@ p3MetaBatchSize: int = 20  # {5, 20}
 p3InnerStepSize: float = 0.05  # NEED TO DOUBLE-CHECK
 
 # Choosing Pre-Trained NN using its parameters
-p3NN: str = "1D-Conv" # 1D-Conv or FCNN
-p3NNSize = p3Size = 40
+p3NN: str = "FCNN" # 1D-Conv or FCNN
+p3NNSize = p3Size = 15
 p3NNEpoch: int = 1000  # {20, 200, 1000}
 p3NNBatch: int = 1028  # {16, 512, 1028}
 
@@ -65,8 +65,8 @@ p4Data: str = "Nitride (Dataset 1) NTi.csv"
 p4BatchSize: int = 1028 # {16, 512, 1028} (?)
 
 # Choosing Meta-Trained NN using its parameters
-p4NN: str = "FCNN" # 1D-Conv or FCNN
-p4NNSize: int = 35
+p4NN: str = "1D-Conv" # 1D-Conv or FCNN
+p4NNSize: int = 15
 p4NNEpoch: int = 1000  # {20, 200, 1000}
 p4NNBatch: int = 1028  # {16, 512, 1028}
 p4N: int = 25600  # N {6400, 12800, 25600}
@@ -87,7 +87,7 @@ p5RandomState: int = 47
 
 # Choosing Fine-Tuned NN using its parameters
 p5NN: str = "1D-Conv" # 1D-Conv or FCNN
-p5NNSize: int = 25
+p5NNSize: int = 15
 p5N: int = 25600  # N {6400, 12800, 25600}
 p5NNEpoch: int = 1000  # {5, 10, 100, 200}
 p5NNBatch: int = 1028  # {16, 512, 1028}
