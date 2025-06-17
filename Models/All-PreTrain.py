@@ -1,6 +1,7 @@
 # Runner script for FCNN and 1D-Conv PreTrain scripts
 import subprocess
 
+print("Starting PreTrain; DO NOT ADJUST CONFIG P2 WHILE RUNNING")
 print("Starting FCNN PreTrain")
 subprocess.run(["python", "FCNN-PreTrain.py"])
 print("Starting 1D-Conv PreTrain")

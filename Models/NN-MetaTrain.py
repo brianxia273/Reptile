@@ -70,6 +70,9 @@ nnModelPath = os.path.join("Pre-Trained Neural Networks", nn, datasetModels, out
 nnModel = load_model(nnModelPath)
 optimizer = Adam(learning_rate=innerStepSize)
 
+trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
+print("Training" + trainedModelName + f", randomState {randomState}")
+
 # Meta-Iteration Loop
 for metaIter in range(metaTasks):
     # Save temporary weights
@@ -106,7 +109,6 @@ for metaIter in range(metaTasks):
 # Save trained model
 modelDirectory = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output)
 os.makedirs(modelDirectory, exist_ok=True)
-trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 nnModel.save(os.path.join(modelDirectory, trainedModelName))
 print("Saved " + os.path.join(modelDirectory, trainedModelName) + "!")
 
