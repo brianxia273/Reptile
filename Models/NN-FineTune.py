@@ -60,7 +60,7 @@ print("Saved " + os.path.join(scalerDirectory, scalerName) + "!")
 history = mlModel.fit(xTrainScaled, yTrain, epochs=epochs, batch_size=batchSize, verbose=1, validation_data=(xTestScaled, yTest))
 
 # Print history
-print("Training Loss:", history.history['loss'])
+# print("Training Loss:", history.history['loss'])
 
 # Save Fine-Tuned NN
 directory = os.path.join("Fine-Tuned Neural Networks", nn, datasetModels, output)
