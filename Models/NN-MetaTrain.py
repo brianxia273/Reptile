@@ -71,7 +71,7 @@ nnModel = load_model(nnModelPath)
 optimizer = Adam(learning_rate=innerStepSize)
 
 trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
-print("Training" + trainedModelName + f", randomState {randomState}")
+print("Training " + trainedModelName + f", randomState {randomState}")
 
 # Meta-Iteration Loop
 for metaIter in range(metaTasks):
