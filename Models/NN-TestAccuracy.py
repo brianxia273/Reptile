@@ -52,11 +52,11 @@ r2 = r2_score(yTest, yPredict)
 
 # Print accuracy
 print(f"{mlModelPath} Model Evaluation Metrics: ")
-print(f"MSE: {mse}\n")
-print(f"RMSE: {rmse}\n")
-print(f"MAPE: {mape}\n")
-print(f"EV: {ev}\n")
-print(f"R^2: {r2}\n")
+print(f"MSE: {mse}")
+print(f"RMSE: {rmse}")
+print(f"MAPE: {mape}")
+print(f"EV: {ev}")
+print(f"R^2: {r2}")
 
 plt.figure(figsize=(8, 6))
 plt.scatter(yTest, yPredict, alpha=0.6, edgecolor='k')
