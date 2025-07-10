@@ -5,10 +5,10 @@
 
 # Phase 1: WriteMetrics, DataGenerate, and GridSearch Configuration
 # NOTE: NEED TO SELF-MODIFY HYPERPARAMETERS FOR GPR AND SVR IN WriteMetrics AND DataGenerate
-p1Size: int = 5
-p1Data: str = "Nitride (Dataset 1) NTi.csv"
-p1RandomState: int = 50
-p1YIndex: int = -1  # (-2) = film-thickness, (-1) = N/Ti ratio
+p1Size: int = 40        # Always set to 40 for WriteMetrics
+p1Data: str = "NitrideMetal (Dataset 2) NTi.csv"
+p1RandomState: int = 40
+p1YIndex: int = -2  # (-2) = film-thickness, (-1) = N/Ti ratio
 
 p1SvrExtrapolationRange: float = 0.03
 p1N: int = 25600  # N = Augmented Data Count, {6400, 12800, 25600}
