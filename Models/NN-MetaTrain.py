@@ -9,6 +9,7 @@ from tensorflow.keras.losses import MeanSquaredError
 import pandas as pd
 import config
 import os
+import time
 
 # Select hyperparameters from config
 innerStepSize = config.p3InnerStepSize
@@ -72,6 +73,21 @@ optimizer = Adam(learning_rate=innerStepSize)
 
 trainedModelName = f"Meta-Trained {nn} - N_{augmentedDataCount} Size_{adSize} Epoch_{nnEpoch} Batch_{nnBatch}.keras"
 print("Training " + trainedModelName + f", randomState {randomState}")
+mse = MeanSquaredError()
+startTime = time.time()
+
+@tf.function
+def innerLoop(xTensor, yTensor):
+    # Record MSE computations, to later compute gradients/derivatives
+    with tf.GradientTape() as tape:
+        # Calculate LMSE of predicted and actual output
+        predictions = nnModel(xTensor)
+        lmseLoss = mse(yTensor, predictions)
+    # Compute gradients/derivatives of MSE equation, tells us direction/magnitude to minimize loss. Multiply by loss function, add onto weight
+    gradients = tape.gradient(lmseLoss, nnModel.trainable_weights)
+    # Pair gradients and trainable weights, updates weights of NN by adding (innerLearningRate)*(gradients) to weights
+    optimizer.apply_gradients(zip(gradients, nnModel.trainable_weights))
+    return lmseLoss
 
 # Meta-Iteration Loop
 for metaIter in range(metaTasks):
@@ -85,18 +101,10 @@ for metaIter in range(metaTasks):
     miniBatchIndices = np.random.choice(len(xScaled), metaBatchSize, replace=False)
     xBatchScaled = xScaled[miniBatchIndices]
     yBatch = y[miniBatchIndices]
-    mse = MeanSquaredError()
     # Inner Loop Training
+    xTensor, yTensor = tf.convert_to_tensor(xBatchScaled, dtype=tf.float32), tf.convert_to_tensor(yBatch, dtype=tf.float32)
     for _ in range(metaEpochs):
-        # Record MSE computations, to later compute gradients/derivatives
-        with tf.GradientTape() as tape:
-            # Calculate LMSE of predicted and actual output
-            predictions = nnModel(xBatchScaled)
-            lmseLoss = mse(yBatch, predictions)
-        # Compute gradients/derivatives of MSE equation, tells us direction/magnitude to minimize loss. Multiply by loss function, add onto weight
-        gradients = tape.gradient(lmseLoss, nnModel.trainable_weights)
-        # Pair gradients and trainable weights, updates weights of NN by adding (innerLearningRate)*(gradients) to weights
-        optimizer.apply_gradients(zip(gradients, nnModel.trainable_weights))
+        lmseLoss = innerLoop(xTensor, yTensor)
     # Apply Meta-Update
     newWeights = nnModel.get_weights()
     for var in range(len(newWeights)):
@@ -111,9 +119,10 @@ modelDirectory = os.path.join("Meta-Trained Neural Networks", nn, datasetModels,
 os.makedirs(modelDirectory, exist_ok=True)
 nnModel.save(os.path.join(modelDirectory, trainedModelName))
 print("Saved " + os.path.join(modelDirectory, trainedModelName) + "!")
+endTime = time.time()
+print(f"Time Elapsed: {endTime - startTime} seconds")
 
 # Visualize results - to be added
-
 # ================================================================================
 # Extra reference code
 # ================================================================================
