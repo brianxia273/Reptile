@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 import pandas as pd
 import config
 import os
-from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
+from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score, mean_absolute_percentage_error
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import joblib
@@ -46,12 +46,13 @@ xTestScaled = dataScaler.transform(xTestLog)
 yPredict = mlModel.predict(xTestScaled)
 mse = mean_squared_error(yTest, yPredict)
 rmse = np.sqrt(mse)
-mape = np.mean(np.abs((yTest - yPredict) / yTest))
+mape = mean_absolute_percentage_error(yTest, yPredict)
 ev = explained_variance_score(yTest, yPredict)
 r2 = r2_score(yTest, yPredict)
 
 # Print accuracy
 print(f"{mlModelPath} Model Evaluation Metrics: ")
+print(f"Seed: {randomState}")
 print(f"MSE: {mse}")
 print(f"RMSE: {rmse}")
 print(f"MAPE: {mape}")

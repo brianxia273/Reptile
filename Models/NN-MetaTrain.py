@@ -111,8 +111,8 @@ for metaIter in range(metaTasks):
         newWeights[var] = oldWeights[var] + ((newWeights[var] - oldWeights[var]) * metaStepSize)
     nnModel.set_weights(newWeights)
     # Logging loss every 100 iterations
-    # if metaIter % 100 == 0:
-    print(f"Meta-iteration {metaIter}: Loss = {np.mean(lmseLoss.numpy()):.6f}")
+    if metaIter % 100 == 0:
+        print(f"Meta-iteration {metaIter}: Loss = {np.mean(lmseLoss.numpy()):.6f}")
 
 # Save trained model
 modelDirectory = os.path.join("Meta-Trained Neural Networks", nn, datasetModels, output)
