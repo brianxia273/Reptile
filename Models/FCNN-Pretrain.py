@@ -41,9 +41,7 @@ def constructModelLayers():
     model.add(Dropout(0.2))
 
     # Output Layer
-    model.add(Dense(1, kernel_initializer=RandomNormal(), kernel_regularizer=l1_l2(l1=1e-3, l2=1e-2)))
-    model.add(BatchNormalization())
-    model.add(Activation('linear'))
+    model.add(Dense(1, kernel_initializer=RandomNormal()))
 
     model.compile(optimizer=Adam(learning_rate=learningRate), loss='mean_squared_error')
     return model
